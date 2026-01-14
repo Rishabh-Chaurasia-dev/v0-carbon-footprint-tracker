@@ -46,7 +46,7 @@ export function DashboardNav({ user }: DashboardNavProps) {
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                 <Leaf className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-semibold text-foreground">EcoTrack</span>
+              <span className="text-xl font-semibold text-foreground">Carbonova</span>
             </Link>
             <nav className="hidden md:flex items-center gap-1">
               {navItems.map((item) => {

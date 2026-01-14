@@ -14,7 +14,7 @@ export default function LandingPage() {
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                 <Leaf className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-semibold text-foreground">EcoTrack</span>
+              <span className="text-xl font-semibold text-foreground">Carbonova</span>
             </div>
             <nav className="hidden md:flex items-center gap-8">
               <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
@@ -312,10 +312,10 @@ export default function LandingPage() {
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                 <Leaf className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-lg font-semibold text-foreground">EcoTrack</span>
+              <span className="text-lg font-semibold text-foreground">Carbonova</span>
             </div>
             <div className="text-sm text-muted-foreground">
-              &copy; {new Date().getFullYear()} EcoTrack. All rights reserved.
+              &copy; {new Date().getFullYear()} Carbonova. All rights reserved.
             </div>
           </div>
         </div>
