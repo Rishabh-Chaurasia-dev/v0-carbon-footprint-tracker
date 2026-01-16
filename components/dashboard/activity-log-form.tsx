@@ -226,58 +226,89 @@ export function ActivityLogForm({ activityTypes }: ActivityLogFormProps) {
     }
   }
 
-  const handleTypeSelect = (typeId: string) => {
-    const type = activityTypes.find((t) => t.id === typeId)
-    setSelectedType(type || null)
-    setPhotoFile(null)
-    setPhotoPreview(null)
-    setDailyLimitReached(false)
-    setDailyCount(0)
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedType || !quantity) return
 
-  const handlePhotoChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const validTypes = ["image/jpeg", "image/png", "image/webp", "image/heic", "video/mp4", "video/quicktime"]
-      if (!validTypes.includes(file.type)) {
-        setError("Please upload a valid image (JPEG, PNG, WebP) or video (MP4, MOV)")
-        return
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const supabase = createClient()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      if (!user) {
+        throw new Error("Not authenticated")
       }
-      if (file.size > 10 * 1024 * 1024) {
-        setError("File must be less than 10MB")
-        return
+
+      let photoUrl = null
+
+      // Upload photo if present
+      if (photoFile) {
+        const fileExt = photoFile.name.split(".").pop()
+        const fileName = `${user.id}/${Date.now()}.${fileExt}`
+
+        const { error: uploadError, data: uploadData } = await supabase.storage
+          .from("activity-photos")
+          .upload(fileName, photoFile)
+
+        if (uploadError) {
+          // If bucket doesn't exist, continue without photo
+          console.warn("Photo upload skipped:", uploadError.message)
+        } else if (uploadData) {
+          const {
+            data: { publicUrl },
+          } = supabase.storage.from("activity-photos").getPublicUrl(fileName)
+          photoUrl = publicUrl
+        }
       }
-      setPhotoFile(file)
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPhotoPreview(reader.result as string)
+
+      // 1. Insert activity
+      const points = calculatePoints()
+      const carbonSaved = calculateCarbonSaved()
+
+      const { error: insertError } = await supabase.from("activities").insert({
+        user_id: user.id,
+        activity_type_id: selectedType.id,
+        quantity: Number(quantity),
+        points_earned: points,
+        carbon_saved_kg: carbonSaved,
+        notes: notes || null,
+        photo_url: photoUrl,
+      })
+
+      if (insertError) throw insertError
+
+      // 2. Manually update profile stats (Fix for points not increasing)
+      const { data: currentProfile } = await supabase
+        .from("profiles")
+        .select("total_points, carbon_saved_kg")
+        .eq("id", user.id)
+        .single()
+
+      if (currentProfile) {
+        await supabase
+          .from("profiles")
+          .update({
+            total_points: (currentProfile.total_points || 0) + points,
+            carbon_saved_kg: (currentProfile.carbon_saved_kg || 0) + carbonSaved,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", user.id)
       }
-      reader.readAsDataURL(file)
-      setError(null)
+
+      setSuccess(true)
+      setTimeout(() => {
+        router.push("/dashboard")
+        router.refresh()
+      }, 1500)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to log activity")
+    } finally {
+      setIsLoading(false)
     }
-  }, [])
-
-  const removePhoto = () => {
-    setPhotoFile(null)
-    setPhotoPreview(null)
-  }
-
-  const calculatePoints = () => {
-    if (!selectedType || !quantity) return 0
-    return Math.round(Number(quantity) * selectedType.points_per_unit)
-  }
-
-  const calculateCarbonSaved = () => {
-    if (!selectedType || !quantity) return 0
-    return Number(quantity) * Number(selectedType.carbon_factor)
-  }
-
-  const canSubmit = () => {
-    if (!selectedType || !quantity) return false
-    if (!photoFile) return false
-    if (!location) return false
-    if (dailyLimitReached) return false
-    return true
   }
 
   const getValidationStatus = () => {
