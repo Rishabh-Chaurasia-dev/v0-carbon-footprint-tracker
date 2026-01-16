@@ -259,7 +259,7 @@ export function ActivityLogForm({ activityTypes }: ActivityLogFormProps) {
           )}
 
           {/* Photo Upload (for activities that require it) */}
-          {selectedType?.requires_photo && (
+          {(selectedType?.requires_photo || selectedType?.name === "Public Transport") && (
             <div className="space-y-2">
               <Label>Photo Evidence</Label>
               {!photoPreview ? (
