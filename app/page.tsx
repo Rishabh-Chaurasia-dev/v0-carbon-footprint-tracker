@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Leaf, Sun, Car, TreeDeciduous, Gift, BarChart3, ArrowRight, CheckCircle2 } from "lucide-react"
+import { Leaf, Sun, Car, Gift, BarChart3, ArrowRight, CheckCircle2 } from "lucide-react"
 
 export default function LandingPage() {
   return (
@@ -14,7 +14,7 @@ export default function LandingPage() {
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                 <Leaf className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-semibold text-foreground">Carbonova</span>
+              <span className="text-xl font-semibold text-foreground">EcoTrack</span>
             </div>
             <nav className="hidden md:flex items-center gap-8">
               <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
@@ -132,22 +132,11 @@ export default function LandingPage() {
             <Card className="border-border hover:border-primary/50 transition-colors">
               <CardContent className="pt-6">
                 <div className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center mb-4">
-                  <TreeDeciduous className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">Tree Planting</h3>
-                <p className="text-sm text-muted-foreground">
-                  Document your plantation activities with photos and earn significant carbon credits.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="border-border hover:border-primary/50 transition-colors">
-              <CardContent className="pt-6">
-                <div className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center mb-4">
                   <Leaf className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">Sustainable Choices</h3>
                 <p className="text-sm text-muted-foreground">
-                  Upload photos of tote bag usage, composting, recycling, and other daily eco-actions.
+                  Upload photos of your plant-based meals and other daily eco-actions.
                 </p>
               </CardContent>
             </Card>
@@ -312,10 +301,10 @@ export default function LandingPage() {
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                 <Leaf className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-lg font-semibold text-foreground">Carbonova</span>
+              <span className="text-lg font-semibold text-foreground">EcoTrack</span>
             </div>
             <div className="text-sm text-muted-foreground">
-              &copy; {new Date().getFullYear()} Carbonova. All rights reserved.
+              &copy; {new Date().getFullYear()} EcoTrack. All rights reserved.
             </div>
           </div>
         </div>
