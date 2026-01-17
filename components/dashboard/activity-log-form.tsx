@@ -138,18 +138,39 @@ export function ActivityLogForm({ activityTypes }: ActivityLogFormProps) {
         }
       }
 
-      // Insert activity
+      // 1. Insert activity
+      const points = calculatePoints()
+      const carbonSaved = calculateCarbonSaved()
+
       const { error: insertError } = await supabase.from("activities").insert({
         user_id: user.id,
         activity_type_id: selectedType.id,
         quantity: Number(quantity),
-        points_earned: calculatePoints(),
-        carbon_saved_kg: calculateCarbonSaved(),
+        points_earned: points,
+        carbon_saved_kg: carbonSaved,
         notes: notes || null,
         photo_url: photoUrl,
       })
 
       if (insertError) throw insertError
+
+      // 2. Manually update profile stats (Fix for points not increasing)
+      const { data: currentProfile } = await supabase
+        .from("profiles")
+        .select("total_points, carbon_saved_kg")
+        .eq("id", user.id)
+        .single()
+
+      if (currentProfile) {
+        await supabase
+          .from("profiles")
+          .update({
+            total_points: (currentProfile.total_points || 0) + points,
+            carbon_saved_kg: (currentProfile.carbon_saved_kg || 0) + carbonSaved,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", user.id)
+      }
 
       setSuccess(true)
       setTimeout(() => {
@@ -238,7 +259,7 @@ export function ActivityLogForm({ activityTypes }: ActivityLogFormProps) {
           )}
 
           {/* Photo Upload (for activities that require it) */}
-          {selectedType?.requires_photo && (
+          {(selectedType?.requires_photo || selectedType?.name === "Public Transport") && (
             <div className="space-y-2">
               <Label>Photo Evidence</Label>
               {!photoPreview ? (

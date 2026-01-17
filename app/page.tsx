@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Leaf, Sun, Car, TreeDeciduous, Gift, BarChart3, ArrowRight, CheckCircle2 } from "lucide-react"
+import { Leaf, Sun, Car, Gift, BarChart3, ArrowRight, CheckCircle2 } from "lucide-react"
 
 export default function LandingPage() {
   return (
@@ -132,22 +132,11 @@ export default function LandingPage() {
             <Card className="border-border hover:border-primary/50 transition-colors">
               <CardContent className="pt-6">
                 <div className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center mb-4">
-                  <TreeDeciduous className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">Tree Planting</h3>
-                <p className="text-sm text-muted-foreground">
-                  Document your plantation activities with photos and earn significant carbon credits.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="border-border hover:border-primary/50 transition-colors">
-              <CardContent className="pt-6">
-                <div className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center mb-4">
                   <Leaf className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">Sustainable Choices</h3>
                 <p className="text-sm text-muted-foreground">
-                  Upload photos of tote bag usage, composting, recycling, and other daily eco-actions.
+                  Upload photos of your plant-based meals and other daily eco-actions.
                 </p>
               </CardContent>
             </Card>

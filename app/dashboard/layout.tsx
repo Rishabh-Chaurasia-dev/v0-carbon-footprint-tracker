@@ -5,12 +5,21 @@ import { DashboardNav } from "@/components/dashboard/dashboard-nav"
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser()
 
-  if (error || !user) {
+  let user = null
+  try {
+    const { data, error } = await supabase.auth.getUser()
+    if (error) {
+      console.error("Auth error:", error.message)
+      redirect("/auth/login")
+    }
+    user = data?.user
+  } catch (err) {
+    console.error("Failed to get user:", err)
+    redirect("/auth/login")
+  }
+
+  if (!user) {
     redirect("/auth/login")
   }
 

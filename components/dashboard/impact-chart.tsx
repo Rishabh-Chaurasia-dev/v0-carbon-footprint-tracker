@@ -2,7 +2,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts"
-import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart"
 import { format, parseISO, startOfDay, eachDayOfInterval, subDays } from "date-fns"
 
 interface ImpactChartProps {
@@ -11,6 +10,24 @@ interface ImpactChartProps {
     carbon_saved_kg: number
     points_earned: number
   }[]
+}
+
+function CustomTooltip({
+  active,
+  payload,
+  label,
+}: { active?: boolean; payload?: { value: number }[]; label?: string }) {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-background border border-border rounded-lg shadow-lg p-3">
+        <p className="text-sm font-medium text-foreground">{label}</p>
+        <p className="text-sm text-primary">
+          Carbon Saved: <span className="font-semibold">{payload[0].value} kg</span>
+        </p>
+      </div>
+    )
+  }
+  return null
 }
 
 export function ImpactChart({ activities }: ImpactChartProps) {
@@ -37,12 +54,7 @@ export function ImpactChart({ activities }: ImpactChartProps) {
     }
   })
 
-  const chartConfig = {
-    carbon: {
-      label: "Carbon Saved (kg)",
-      color: "hsl(var(--chart-1))",
-    },
-  }
+  const fillColor = "hsl(168, 76%, 36%)"
 
   return (
     <Card className="border-border">
@@ -51,16 +63,16 @@ export function ImpactChart({ activities }: ImpactChartProps) {
         <CardDescription>Carbon saved over the last 7 days</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[250px] w-full">
+        <div className="h-[250px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <XAxis dataKey="date" tickLine={false} axisLine={false} fontSize={12} tickMargin={8} />
               <YAxis tickLine={false} axisLine={false} fontSize={12} tickMargin={8} />
-              <Tooltip content={<ChartTooltipContent />} />
-              <Bar dataKey="carbon" fill="var(--color-carbon)" radius={[4, 4, 0, 0]} name="Carbon (kg)" />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey="carbon" fill={fillColor} radius={[4, 4, 0, 0]} name="Carbon (kg)" />
             </BarChart>
           </ResponsiveContainer>
-        </ChartContainer>
+        </div>
       </CardContent>
     </Card>
   )

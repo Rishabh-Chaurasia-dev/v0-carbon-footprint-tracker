@@ -12,7 +12,7 @@ export default function SignUpSuccessPage() {
             <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
               <Leaf className="w-6 h-6 text-primary-foreground" />
             </div>
-            <span className="text-2xl font-semibold text-foreground">EcoTrack</span>
+            <span className="text-2xl font-semibold text-foreground">Carbonova</span>
           </div>
           <Card className="border-border">
             <CardHeader className="text-center">

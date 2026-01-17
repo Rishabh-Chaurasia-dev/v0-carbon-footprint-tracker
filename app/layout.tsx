@@ -8,7 +8,7 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "EcoTrack - Track Your Positive Carbon Impact",
+  title: "Carbonova - Track Your Positive Carbon Impact",
   description:
     "Monitor and earn rewards for your eco-friendly activities. Track solar energy, sustainable transportation, volunteering, and more.",
   generator: "v0.app",
