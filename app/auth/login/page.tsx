@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { createClient } from "@/lib/supabase/client"
+import { login } from "@/app/auth/actions"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -21,17 +21,17 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    const supabase = createClient()
     setIsLoading(true)
     setError(null)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-      if (error) throw error
-      router.push("/dashboard")
+      const result = await login({ email, password })
+      if (result.error) {
+        setError(result.error)
+      } else {
+        router.push("/dashboard")
+        router.refresh()
+      }
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred")
     } finally {
@@ -47,7 +47,7 @@ export default function LoginPage() {
             <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
               <Leaf className="w-6 h-6 text-primary-foreground" />
             </div>
-            <span className="text-2xl font-semibold text-foreground">EcoTrack</span>
+            <span className="text-2xl font-semibold text-foreground">Carbonova</span>
           </div>
           <Card className="border-border">
             <CardHeader className="text-center">
