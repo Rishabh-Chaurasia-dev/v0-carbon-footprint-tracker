@@ -20,9 +20,6 @@ export function createClient() {
     process.env.SUPABASE_ANON_KEY ||
     ""
 
-  console.log("[v0] Supabase client URL:", supabaseUrl ? supabaseUrl.substring(0, 30) + "..." : "EMPTY")
-  console.log("[v0] Supabase client key:", supabaseAnonKey ? supabaseAnonKey.substring(0, 10) + "..." : "EMPTY")
-
   const client = createBrowserClient(supabaseUrl, supabaseAnonKey)
 
   if (typeof window !== "undefined") {
