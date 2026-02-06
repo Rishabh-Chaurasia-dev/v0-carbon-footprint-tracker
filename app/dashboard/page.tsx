@@ -7,44 +7,31 @@ import type { Profile, Activity, ActivityType } from "@/lib/types"
 export default async function DashboardPage() {
   const supabase = await createClient()
 
-  let user = null
-  let profile = null
-  let activities: (Activity & { activity_types: ActivityType })[] = []
-  let weeklyActivities: { created_at: string; carbon_saved_kg: number; points_earned: number }[] = []
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  try {
-    const { data: userData } = await supabase.auth.getUser()
-    user = userData?.user
+  // Fetch user profile
+  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user?.id).single()
 
-    if (user) {
-      // Fetch user profile
-      const { data: profileData } = await supabase.from("profiles").select("*").eq("id", user.id).single()
-      profile = profileData
+  // Fetch recent activities with activity type info
+  const { data: activities } = await supabase
+    .from("activities")
+    .select(`*, activity_types(*)`)
+    .eq("user_id", user?.id)
+    .order("created_at", { ascending: false })
+    .limit(10)
 
-      // Fetch recent activities with activity type info
-      const { data: activitiesData } = await supabase
-        .from("activities")
-        .select(`*, activity_types(*)`)
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(10)
-      activities = (activitiesData as (Activity & { activity_types: ActivityType })[]) || []
+  // Fetch activity stats for chart (last 7 days)
+  const sevenDaysAgo = new Date()
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
-      // Fetch activity stats for chart (last 7 days)
-      const sevenDaysAgo = new Date()
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-
-      const { data: weeklyData } = await supabase
-        .from("activities")
-        .select("created_at, carbon_saved_kg, points_earned")
-        .eq("user_id", user.id)
-        .gte("created_at", sevenDaysAgo.toISOString())
-        .order("created_at", { ascending: true })
-      weeklyActivities = weeklyData || []
-    }
-  } catch (err) {
-    console.error("Error fetching dashboard data:", err)
-  }
+  const { data: weeklyActivities } = await supabase
+    .from("activities")
+    .select("created_at, carbon_saved_kg, points_earned")
+    .eq("user_id", user?.id)
+    .gte("created_at", sevenDaysAgo.toISOString())
+    .order("created_at", { ascending: true })
 
   return (
     <div className="space-y-8">
@@ -55,11 +42,11 @@ export default async function DashboardPage() {
         <p className="text-muted-foreground mt-1">Here&apos;s your environmental impact overview</p>
       </div>
 
-      <StatsCards profile={profile as Profile | null} activitiesCount={activities.length} />
+      <StatsCards profile={profile as Profile | null} activitiesCount={activities?.length || 0} />
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <ImpactChart activities={weeklyActivities} />
-        <RecentActivities activities={activities} />
+        <ImpactChart activities={weeklyActivities || []} />
+        <RecentActivities activities={(activities as (Activity & { activity_types: ActivityType })[]) || []} />
       </div>
     </div>
   )

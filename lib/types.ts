@@ -17,7 +17,6 @@ export interface ActivityType {
   carbon_factor: number
   icon: string | null
   requires_photo: boolean
-  daily_limit: number
   created_at: string
 }
 
@@ -31,14 +30,6 @@ export interface Activity {
   notes: string | null
   photo_url: string | null
   verified: boolean
-  status: "pending" | "approved" | "rejected"
-  latitude: number | null
-  longitude: number | null
-  location_accuracy: number | null
-  location_address: string | null
-  submitted_at: string
-  reviewed_at: string | null
-  rejection_reason: string | null
   created_at: string
   activity_types?: ActivityType
 }
@@ -67,11 +58,4 @@ export interface Redemption {
   redeemed_at: string
   status: "pending" | "used" | "expired"
   vouchers?: Voucher
-}
-
-export interface LocationData {
-  latitude: number
-  longitude: number
-  accuracy: number
-  address?: string
 }

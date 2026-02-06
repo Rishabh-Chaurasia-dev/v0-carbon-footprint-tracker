@@ -5,17 +5,8 @@ import type { ActivityType } from "@/lib/types"
 export default async function LogActivityPage() {
   const supabase = await createClient()
 
-  // Fetch all activity types, filtering out removed ones
-  const { data: activityTypes } = await supabase
-    .from("activity_types")
-    .select("*")
-    .neq("name", "Composting")
-    .neq("name", "Beach/Park Cleanup")
-    .neq("name", "Community Garden")
-    .neq("name", "Recycling")
-    .neq("name", "Tote Bag Usage")
-    .neq("name", "Tree Planting")
-    .order("name", { ascending: true })
+  // Fetch all activity types
+  const { data: activityTypes } = await supabase.from("activity_types").select("*").order("name", { ascending: true })
 
   return (
     <div className="max-w-2xl mx-auto">

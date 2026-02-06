@@ -1,29 +1,33 @@
 import { createBrowserClient } from "@supabase/ssr"
 
-const SUPABASE_CLIENT_KEY = "__supabase_client__"
+declare global {
+  interface Window {
+    __supabase_client?: ReturnType<typeof createBrowserClient>
+  }
+}
 
 export function createClient() {
-  if (typeof window === "undefined") {
-    // Server-side: create new client each time
-    return createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
-    )
+  if (typeof window !== "undefined" && window.__supabase_client) {
+    return window.__supabase_client
   }
 
-  // Browser-side: use singleton stored on window
-  const windowWithSupabase = window as typeof window & {
-    [SUPABASE_CLIENT_KEY]?: ReturnType<typeof createBrowserClient>
+  const supabaseUrl =
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.SUPABASE_URL ||
+    ""
+  const supabaseAnonKey =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.SUPABASE_ANON_KEY ||
+    ""
+
+  console.log("[v0] Supabase client URL:", supabaseUrl ? supabaseUrl.substring(0, 30) + "..." : "EMPTY")
+  console.log("[v0] Supabase client key:", supabaseAnonKey ? supabaseAnonKey.substring(0, 10) + "..." : "EMPTY")
+
+  const client = createBrowserClient(supabaseUrl, supabaseAnonKey)
+
+  if (typeof window !== "undefined") {
+    window.__supabase_client = client
   }
 
-  if (windowWithSupabase[SUPABASE_CLIENT_KEY]) {
-    return windowWithSupabase[SUPABASE_CLIENT_KEY]
-  }
-
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-
-  windowWithSupabase[SUPABASE_CLIENT_KEY] = createBrowserClient(supabaseUrl, supabaseAnonKey)
-
-  return windowWithSupabase[SUPABASE_CLIENT_KEY]
+  return client
 }
