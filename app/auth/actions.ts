@@ -12,6 +12,12 @@ export async function login(formData: { email: string; password: string }) {
   })
 
   if (error) {
+    if (error.message === "Invalid login credentials") {
+      return { error: "Invalid email or password. Please check your credentials or sign up for a new account." }
+    }
+    if (error.message.includes("Email not confirmed")) {
+      return { error: "Please check your email and confirm your account before signing in." }
+    }
     return { error: error.message }
   }
 
