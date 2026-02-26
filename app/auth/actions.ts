@@ -2,11 +2,12 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
+import type { UserRole } from "@/lib/types"
 
 export async function login(formData: { email: string; password: string }) {
   const supabase = await createClient()
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email: formData.email,
     password: formData.password,
   })
@@ -21,13 +22,29 @@ export async function login(formData: { email: string; password: string }) {
     return { error: error.message }
   }
 
-  return { success: true }
+  // Fetch the user's role from their profile
+  let role: UserRole = "individual"
+  if (data.user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", data.user.id)
+      .single()
+
+    if (profile?.role) {
+      role = profile.role as UserRole
+    }
+  }
+
+  return { success: true, role }
 }
 
 export async function signup(formData: {
   email: string
   password: string
   fullName: string
+  role: UserRole
+  companyName?: string
 }) {
   const supabase = await createClient()
 
@@ -37,6 +54,8 @@ export async function signup(formData: {
     options: {
       data: {
         full_name: formData.fullName,
+        role: formData.role,
+        company_name: formData.companyName || null,
       },
     },
   })
@@ -46,13 +65,14 @@ export async function signup(formData: {
   }
 
   if (data.user) {
-    // Try to create profile manually in case trigger didn't work
     await supabase.from("profiles").upsert(
       {
         id: data.user.id,
         full_name: formData.fullName,
         total_points: 0,
         carbon_saved_kg: 0,
+        role: formData.role,
+        company_name: formData.companyName || null,
       },
       { onConflict: "id" }
     )

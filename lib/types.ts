@@ -1,9 +1,13 @@
+export type UserRole = "individual" | "industry"
+
 export interface Profile {
   id: string
   full_name: string | null
   avatar_url: string | null
   total_points: number
   carbon_saved_kg: number
+  role: UserRole
+  company_name: string | null
   created_at: string
   updated_at: string
 }
