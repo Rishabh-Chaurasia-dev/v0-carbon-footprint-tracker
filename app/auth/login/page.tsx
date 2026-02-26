@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { login } from "@/app/auth/actions"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,7 +9,8 @@ import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { Leaf } from "lucide-react"
+import { Leaf, User, Building2 } from "lucide-react"
+import type { UserRole } from "@/lib/types"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -29,7 +29,8 @@ export default function LoginPage() {
       if (result.error) {
         setError(result.error)
       } else {
-        router.push("/dashboard")
+        const target = result.role === "industry" ? "/industry" : "/dashboard"
+        router.push(target)
         router.refresh()
       }
     } catch (error: unknown) {
@@ -52,11 +53,11 @@ export default function LoginPage() {
           <Card className="border-border">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl">Welcome back</CardTitle>
-              <CardDescription>Sign in to continue tracking your impact</CardDescription>
+              <CardDescription>Sign in to your account to continue</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleLogin}>
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-5">
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
                     <Input
@@ -84,7 +85,7 @@ export default function LoginPage() {
                   </Button>
                 </div>
                 <div className="mt-4 text-center text-sm">
-                  Don&apos;t have an account?{" "}
+                  {"Don't have an account? "}
                   <Link href="/auth/sign-up" className="text-primary underline underline-offset-4">
                     Sign up
                   </Link>

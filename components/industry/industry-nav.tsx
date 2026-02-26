@@ -11,26 +11,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
-import { Leaf, LayoutDashboard, PlusCircle, Gift, User, LogOut, Menu, X } from "lucide-react"
+import { Leaf, LayoutDashboard, ShoppingCart, BarChart3, Building2, LogOut, Menu, X } from "lucide-react"
 import { useState } from "react"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import { cn } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 
-
-interface DashboardNavProps {
+interface IndustryNavProps {
   user: SupabaseUser
+  companyName?: string | null
 }
 
 const navItems = [
-  { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
-  { href: "/dashboard/log", label: "Log Activity", icon: PlusCircle },
-  { href: "/dashboard/rewards", label: "Rewards", icon: Gift },
+  { href: "/industry", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/industry/marketplace", label: "Marketplace", icon: ShoppingCart },
+  { href: "/industry/portfolio", label: "Portfolio", icon: BarChart3 },
 ]
 
-export function DashboardNav({ user }: DashboardNavProps) {
+export function IndustryNav({ user, companyName }: IndustryNavProps) {
   const pathname = usePathname()
-  const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const handleSignOut = async () => {
@@ -42,12 +41,12 @@ export function DashboardNav({ user }: DashboardNavProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
-            <Link href="/dashboard" className="flex items-center gap-2">
+            <Link href="/industry" className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                 <Leaf className="w-5 h-5 text-primary-foreground" />
               </div>
               <span className="text-xl font-semibold text-foreground">Carbonova</span>
-              <Badge variant="secondary" className="text-xs">Individual</Badge>
+              <Badge variant="secondary" className="text-xs">Industry</Badge>
             </Link>
             <nav className="hidden md:flex items-center gap-1">
               {navItems.map((item) => {
@@ -77,13 +76,16 @@ export function DashboardNav({ user }: DashboardNavProps) {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="gap-2">
                   <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
-                    <User className="w-4 h-4 text-secondary-foreground" />
+                    <Building2 className="w-4 h-4 text-secondary-foreground" />
                   </div>
-                  <span className="hidden sm:inline text-sm">{user.email?.split("@")[0]}</span>
+                  <span className="hidden sm:inline text-sm">{companyName || user.email?.split("@")[0]}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuItem className="text-muted-foreground text-xs">{user.email}</DropdownMenuItem>
+                {companyName && (
+                  <DropdownMenuItem className="text-muted-foreground text-xs">{companyName}</DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
                   <LogOut className="w-4 h-4 mr-2" />
@@ -103,7 +105,6 @@ export function DashboardNav({ user }: DashboardNavProps) {
           </div>
         </div>
 
-        {/* Mobile navigation */}
         {mobileMenuOpen && (
           <nav className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col gap-1">

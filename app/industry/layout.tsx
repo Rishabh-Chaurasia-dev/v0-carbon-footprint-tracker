@@ -1,9 +1,9 @@
 import type React from "react"
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
-import { DashboardNav } from "@/components/dashboard/dashboard-nav"
+import { IndustryNav } from "@/components/industry/industry-nav"
 
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function IndustryLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
   const {
     data: { user },
@@ -14,20 +14,20 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect("/auth/login")
   }
 
-  // Redirect industry users to their dashboard
+  // Verify this user has the industry role
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, company_name")
     .eq("id", user.id)
     .single()
 
-  if (profile?.role === "industry") {
-    redirect("/industry")
+  if (!profile || profile.role !== "industry") {
+    redirect("/dashboard")
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardNav user={user} />
+      <IndustryNav user={user} companyName={profile.company_name} />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">{children}</main>
     </div>
   )
