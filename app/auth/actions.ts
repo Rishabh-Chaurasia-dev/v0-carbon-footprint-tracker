@@ -22,18 +22,10 @@ export async function login(formData: { email: string; password: string }) {
     return { error: error.message }
   }
 
-  // Fetch the user's role from their profile
+  // Get role from user metadata (stored during signup)
   let role: UserRole = "individual"
-  if (data.user) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", data.user.id)
-      .single()
-
-    if (profile?.role) {
-      role = profile.role as UserRole
-    }
+  if (data.user?.user_metadata?.role) {
+    role = data.user.user_metadata.role as UserRole
   }
 
   return { success: true, role }
