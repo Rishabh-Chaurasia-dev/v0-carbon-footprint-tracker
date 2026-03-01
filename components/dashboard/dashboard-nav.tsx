@@ -30,7 +30,6 @@ const navItems = [
 
 export function DashboardNav({ user }: DashboardNavProps) {
   const pathname = usePathname()
-  const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const handleSignOut = async () => {
