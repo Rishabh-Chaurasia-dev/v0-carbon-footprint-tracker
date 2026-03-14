@@ -1,5 +1,5 @@
 -- Seed activity types with realistic values
-INSERT INTO activity_types activity_types (name, description, points_per_unit, unit, carbon_factor, icon, requires_photo) VALUES
+INSERT INTO activity_types (name, description, points_per_unit, unit, carbon_factor, icon, requires_photo) VALUES
   ('Solar Energy', 'Electricity generated from solar panels', 10, 'kWh', 0.42, 'sun', false),
   ('EV Driving', 'Distance traveled in electric vehicle', 8, 'km', 0.12, 'car', false),
   ('Public Transport', 'Distance traveled by public transportation', 6, 'km', 0.089, 'bus', false),
