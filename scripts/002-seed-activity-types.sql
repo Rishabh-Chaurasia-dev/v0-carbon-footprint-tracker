@@ -1,4 +1,4 @@
--- Seed activity types with realistic values
+-- Seed activity types (Filtered List)
 INSERT INTO activity_types (name, description, points_per_unit, unit, carbon_factor, icon, requires_photo) VALUES
   ('Solar Energy', 'Electricity generated from solar panels', 10, 'kWh', 0.42, 'sun', false),
   ('EV Driving', 'Distance traveled in electric vehicle', 8, 'km', 0.12, 'car', false),
