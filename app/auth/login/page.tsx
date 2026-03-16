@@ -31,7 +31,6 @@ export default function LoginPage() {
       } else {
         const target = result.role === "industry" ? "/industry" : "/dashboard"
         router.push(target)
-        router.refresh()
       }
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred")
