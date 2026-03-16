@@ -6,21 +6,23 @@ declare global {
   }
 }
 
+let cachedClient: ReturnType<typeof createBrowserClient> | null = null
+
 export function createClient() {
-  if (typeof window !== "undefined" && window.__supabase_client) {
-    return window.__supabase_client
+  if (cachedClient) {
+    return cachedClient
   }
 
-  const supabaseUrl =
-    process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    process.env.SUPABASE_URL ||
-    ""
-  const supabaseAnonKey =
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-    process.env.SUPABASE_ANON_KEY ||
-    ""
+  if (typeof window !== "undefined" && window.__supabase_client) {
+    cachedClient = window.__supabase_client
+    return cachedClient
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
 
   const client = createBrowserClient(supabaseUrl, supabaseAnonKey)
+  cachedClient = client
 
   if (typeof window !== "undefined") {
     window.__supabase_client = client
